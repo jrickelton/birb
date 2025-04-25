@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Set your project name here
-set(PROJECT_NAME my_project)
+set(PROJECT_NAME flippy_birb)
 
 # Set your project sources here
 set(PROJECT_SOURCES
