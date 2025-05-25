@@ -10,6 +10,7 @@ enum state_t
 state_t state = PLAYING;
 
 int score = 0;
+bool button_a_was_pressed = false;
 
 struct vec_t
 {
@@ -23,6 +24,18 @@ struct
 {
   vec_t dir;
   vec_t body = {1, 8};
+  uint32_t last_update = 0;
+
+  void flap(uint32_t tick) {
+    dir.y = -1;
+    last_update = tick;
+    body = next();
+  }
+
+  void fall() {
+    dir.y = 1;
+    body = next();
+  }
 
   vec_t next()
   {
@@ -47,23 +60,22 @@ void update(uint32_t tick)
 {
   if (state == PLAYING)
   {
-    if (tick % 10 == 0)
-    {
-      birb.dir.y = 1;
-      if (button(A))
-      {
-        score++;
-        birb.dir.y = -1;
-      }
-      // Update the birb's position
-      birb.body = birb.next();
-
-      // Check for collisions with the bounds
-      if (birb.body.x < 0 || birb.body.x >= bounds.x || birb.body.y < 0 || birb.body.y >= bounds.y)
-      {
-        state = GAME_OVER;
-      }
+    if(!button_a_was_pressed && button(A)) {
+      birb.flap(tick);
     }
+
+    if (tick % 10 == 0 && tick > (birb.last_update + 10))
+    {
+      birb.fall();
+    }
+    
+    // Check for collisions with the bounds
+    if (birb.body.x < 0 || birb.body.x >= bounds.x || birb.body.y < 0 || birb.body.y >= bounds.y)
+    {
+      state = GAME_OVER;
+    }
+
+    button_a_was_pressed = button(A);
   }
   else
   {
