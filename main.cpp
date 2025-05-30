@@ -1,4 +1,5 @@
 #include "picosystem.hpp"
+#include <ctime>
 
 using namespace picosystem;
 
@@ -26,13 +27,15 @@ struct
   vec_t body = {1, 8};
   uint32_t last_update = 0;
 
-  void flap(uint32_t tick) {
+  void flap(uint32_t tick)
+  {
     dir.y = -1;
     last_update = tick;
     body = next();
   }
 
-  void fall() {
+  void fall()
+  {
     dir.y = 1;
     body = next();
   }
@@ -42,6 +45,53 @@ struct
     return {.x = body.x + dir.x, .y = body.y + dir.y};
   }
 } birb;
+
+struct
+{
+  int32_t x_pos = bounds.x;
+  int32_t gap_size = 4;
+  int32_t gap_pos = generate_gap_pos();
+
+  vec_t top_pipe_start()
+  {
+    return {.x = x_pos, .y = -1};
+  }
+
+  int32_t top_pipe_height = gap_pos;
+
+  vec_t bottom_pipe_start()
+  {
+    return {.x = x_pos, .y = gap_pos + gap_size};
+  }
+
+  int32_t bottom_pipe_height = bounds.y + (gap_pos + gap_size) + 1;
+
+  void next()
+  {
+    x_pos -= 1;
+    if (x_pos == 0)
+    {
+      score++;
+    }
+    if (x_pos == -2)
+    {
+      reset();
+    }
+  }
+
+  int32_t generate_gap_pos()
+  {
+    return rand() % (bounds.y - gap_size);
+  }
+
+  void reset()
+  {
+    x_pos = bounds.x;
+    gap_pos = generate_gap_pos();
+    top_pipe_height = gap_pos;
+    bottom_pipe_height = bounds.y - (gap_pos + gap_size);
+  }
+} pipe;
 
 vec_t transform(vec_t v)
 {
@@ -54,21 +104,29 @@ void init()
 
   birb.dir = {.x = 0, .y = 1};
   birb.body = {.x = 1, .y = 8};
+
+  srand(time(0));
+  pipe.reset();
 }
 
 void update(uint32_t tick)
 {
   if (state == PLAYING)
   {
-    if(!button_a_was_pressed && button(A)) {
+    if (!button_a_was_pressed && button(A))
+    {
       birb.flap(tick);
     }
 
-    if (tick % 10 == 0 && tick > (birb.last_update + 10))
+    if (tick % 10 == 0)
     {
-      birb.fall();
+      pipe.next();
+      if (tick > (birb.last_update + 10))
+      {
+        birb.fall();
+      }
     }
-    
+
     // Check for collisions with the bounds
     if (birb.body.x < 0 || birb.body.x >= bounds.x || birb.body.y < 0 || birb.body.y >= bounds.y)
     {
@@ -100,6 +158,13 @@ void draw(uint32_t tick)
 
   // Draw the birb
   pen(15, 14, 1);
-  vec_t screen_pos = transform(birb.body);         // Transform grid position to screen position
-  frect(screen_pos.x, screen_pos.y, scale, scale); // Draw the birb as a rectangle
+  vec_t birb_screen_pos = transform(birb.body);              // Transform grid position to screen position
+  frect(birb_screen_pos.x, birb_screen_pos.y, scale, scale); // Draw the birb as a rectangle
+
+  // Draw the pipes
+  pen(0, 255, 0); // Green color for pipes
+  vec_t top_pipe_screen_pos = transform(pipe.top_pipe_start());
+  vec_t bottom_pipe_screen_pos = transform(pipe.bottom_pipe_start());
+  frect(top_pipe_screen_pos.x, top_pipe_screen_pos.y, scale, pipe.top_pipe_height * scale);
+  frect(bottom_pipe_screen_pos.x, bottom_pipe_screen_pos.y, scale, pipe.bottom_pipe_height * scale);
 }
