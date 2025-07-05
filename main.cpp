@@ -64,7 +64,7 @@ struct
     return {.x = x_pos, .y = gap_pos + gap_size};
   }
 
-  int32_t bottom_pipe_height = bounds.y + (gap_pos + gap_size) + 1;
+  int32_t bottom_pipe_height = bounds.y - (gap_pos + gap_size);
 
   void next()
   {
@@ -175,5 +175,5 @@ void draw(uint32_t tick)
   vec_t top_pipe_screen_pos = transform(pipe.top_pipe_start());
   vec_t bottom_pipe_screen_pos = transform(pipe.bottom_pipe_start());
   frect(top_pipe_screen_pos.x, top_pipe_screen_pos.y, scale, pipe.top_pipe_height * scale);
-  frect(bottom_pipe_screen_pos.x, bottom_pipe_screen_pos.y, scale, pipe.bottom_pipe_height * scale);
+  frect(bottom_pipe_screen_pos.x, bottom_pipe_screen_pos.y, scale, (pipe.bottom_pipe_height + 1) * scale);
 }
