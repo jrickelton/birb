@@ -98,13 +98,13 @@ vec_t transform(vec_t v)
   return {.x = (v.x * scale) + 6, .y = (v.y * scale) + 18};
 }
 
-
 bool collision() {
   return birb.body.y < 0 || birb.body.y >= bounds.y ||
          birb.body.x < 0 || birb.body.x >= bounds.x ||
-         (birb.body.x >= pipe.x_pos && birb.body.x <= pipe.x_pos + 1 &&
-          (birb.body.y < pipe.gap_pos || birb.body.y > pipe.gap_pos + pipe.gap_size)); 
-}
+         (birb.body.x == pipe.x_pos && 
+          (birb.body.y < pipe.top_pipe_height - 1 || 
+           birb.body.y > pipe.bottom_pipe_start().y));
+          }
 
 void init()
 {
