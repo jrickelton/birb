@@ -159,11 +159,7 @@ void draw(uint32_t tick)
 {
   pen(6, 12, 15); // Sky blue color
   clear();
-  pen(0, 0, 0, 4);
-
-  // draw the scoreboard
-  hline(2, 12, 116);
-  text(std::to_string(score), 3, 3);
+  
 
   // Draw the birb
   pen(15, 14, 1);
@@ -176,4 +172,9 @@ void draw(uint32_t tick)
   vec_t bottom_pipe_screen_pos = transform(pipe.bottom_pipe_start());
   frect(top_pipe_screen_pos.x, top_pipe_screen_pos.y, scale, pipe.top_pipe_height * scale);
   frect(bottom_pipe_screen_pos.x, bottom_pipe_screen_pos.y, scale, (pipe.bottom_pipe_height + 1) * scale);
+
+  // draw the scoreboard
+  pen(0, 0, 0, 4);
+  hline(2, 12, 116);
+  text(std::to_string(score), 3, 3);
 }
