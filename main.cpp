@@ -98,7 +98,8 @@ vec_t transform(vec_t v)
   return {.x = (v.x * scale) + 6, .y = (v.y * scale) + 18};
 }
 
-bool collision() {
+bool collision()
+{
   return birb.body.y < 0 || birb.body.y >= bounds.y ||
          birb.body.x < 0 || birb.body.x >= bounds.x ||
          (birb.body.x == pipe.x_pos &&
