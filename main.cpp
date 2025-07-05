@@ -101,14 +101,15 @@ vec_t transform(vec_t v)
 bool collision() {
   return birb.body.y < 0 || birb.body.y >= bounds.y ||
          birb.body.x < 0 || birb.body.x >= bounds.x ||
-         (birb.body.x == pipe.x_pos && 
-          (birb.body.y < pipe.top_pipe_height - 1 || 
+         (birb.body.x == pipe.x_pos &&
+          (birb.body.y < pipe.top_pipe_height - 1 ||
            birb.body.y > pipe.bottom_pipe_start().y));
-          }
+}
 
 void init()
 {
   state = PLAYING;
+  score = 0;
 
   birb.dir = {.x = 0, .y = 1};
   birb.body = {.x = 1, .y = 8};
@@ -138,7 +139,6 @@ void update(uint32_t tick)
     // Check for collisions with the bounds
     if (collision())
     {
-      score = 0;
       state = GAME_OVER;
     }
 
@@ -146,6 +146,9 @@ void update(uint32_t tick)
   }
   else
   {
+    text("GAME OVER!", 15, 30);
+    text("Score: " + std::to_string(score), 15, 40);
+    text("Press A to restart", 15, 50);
     // game over, if user presses A then restart
     if (pressed(A))
     {
@@ -159,7 +162,6 @@ void draw(uint32_t tick)
 {
   pen(6, 12, 15); // Sky blue color
   clear();
-  
 
   // Draw the birb
   pen(15, 14, 1);
