@@ -18,6 +18,17 @@ struct vec_t
   int32_t x, y;
 };
 
+struct sound
+{
+  voice_t v;
+  sound(int32_t attack, int32_t decay, int32_t sustain, int32_t release, int32_t bend = 0, int32_t bend_ms = 0, int32_t reverb = 0, int32_t noise = 0, int32_t distort = 0) : v(voice(attack, decay, sustain, release, bend, bend_ms, reverb, noise, distort)) {}
+  
+  void play_sound(int32_t frequency, int32_t duration, int32_t volume = 100) {
+    play(v, frequency, duration, volume);
+  }
+};
+
+
 constexpr vec_t bounds{.x = 18, .y = 16};
 constexpr int scale = 6;
 
@@ -26,11 +37,14 @@ struct
   vec_t dir;
   vec_t body = {1, 8};
   uint32_t last_update = 0;
+  sound flap_sound = sound(250, 100, 40, 0, 0, 0, 0, 0, 0);
+  sound collision_sound = sound(5, 500, 400, 600, 0, 0, 0, 0, 0);
 
   void flap(uint32_t tick)
   {
     dir.y = -1;
     last_update = tick;
+    flap_sound.play_sound(500, 100, 40);
     body = next();
   }
 
@@ -140,6 +154,7 @@ void update(uint32_t tick)
     // Check for collisions with the bounds
     if (collision())
     {
+      birb.collision_sound.play_sound(200, 1000, 40);
       state = GAME_OVER;
     }
 
