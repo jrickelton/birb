@@ -9,9 +9,30 @@ enum state_t
   GAME_OVER
 };
 
+enum notes {
+  C4 = 261,
+  D4 = 294,
+  E4 = 329,
+  F4 = 349,
+  G4 = 392,
+  A4 = 440,
+  B4 = 494,
+  C5 = 523
+};
+
 struct vec_t
 {
   int32_t x, y;
+};
+
+struct Sound
+{
+  voice_t v;
+  Sound(int32_t attack, int32_t decay, int32_t sustain, int32_t release, int32_t bend = 0, int32_t bend_ms = 0, int32_t reverb = 0, int32_t noise = 0, int32_t distort = 0) : v(voice(attack, decay, sustain, release, bend, bend_ms, reverb, noise, distort)) {}
+  
+  void play_sound(int32_t frequency, int32_t duration, int32_t volume = 100) {
+    play(v, frequency, duration, volume);
+  }
 };
 
 struct Game 
@@ -23,23 +44,16 @@ struct Game
   int32_t scale = 6;
   float speed = 0.0f;
   static constexpr float MAX_SPEED = 5.0f;
+  Sound point_score_sound = Sound(5, 150, 0, 50);
+  Sound speed_up_sound = Sound(50, 200, 50, 300);
 
   void increase_speed() {
     speed = std::min(speed + 0.1f, MAX_SPEED);
+    speed_up_sound.play_sound(notes::C4, 100, 40);
   }
 };
 
 Game game;
-
-struct Sound
-{
-  voice_t v;
-  Sound(int32_t attack, int32_t decay, int32_t sustain, int32_t release, int32_t bend = 0, int32_t bend_ms = 0, int32_t reverb = 0, int32_t noise = 0, int32_t distort = 0) : v(voice(attack, decay, sustain, release, bend, bend_ms, reverb, noise, distort)) {}
-  
-  void play_sound(int32_t frequency, int32_t duration, int32_t volume = 100) {
-    play(v, frequency, duration, volume);
-  }
-};
 
 struct Birb
 {
@@ -53,7 +67,7 @@ struct Birb
   {
     dir.y = -1;
     last_update = tick;
-    flap_sound.play_sound(500, 100, 40);
+    flap_sound.play_sound(notes::F4, 100, 40);
     body = next();
   }
 
@@ -95,6 +109,11 @@ struct Pipe
     if (x_pos == 0)
     {
       game.score++;
+      if(game.score % 5 == 0 && game.score > 0) {
+        game.increase_speed();
+      } else {
+        game.point_score_sound.play_sound(notes::C4, 100, 40);
+      }
     }
     if (x_pos == -2)
     {
@@ -165,15 +184,12 @@ void update(uint32_t tick)
       {
         birb.fall();
       }
-      if(game.score % 5 == 0 && game.score > 0) {
-        game.increase_speed();
-      }
     }
 
     // Check for collisions with the bounds
     if (collision())
     {
-      birb.collision_sound.play_sound(200, 1000, 40);
+      birb.collision_sound.play_sound(notes::C4, 1000, 40);
       game.state = GAME_OVER;
     }
 
