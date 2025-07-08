@@ -20,7 +20,13 @@ struct Game
   bool button_a_was_pressed = false;
   int32_t score = 0;
   vec_t bounds = {18, 16};
-  int scale = 6;
+  int32_t scale = 6;
+  float speed = 0.0f;
+  static constexpr float MAX_SPEED = 5.0f;
+
+  void increase_speed() {
+    speed = std::min(speed + 0.1f, MAX_SPEED);
+  }
 };
 
 Game game;
@@ -134,6 +140,7 @@ void init()
 {
   game.state = PLAYING;
   game.score = 0;
+  game.speed = 0;
 
   birb.dir = {.x = 0, .y = 1};
   birb.body = {.x = 1, .y = 8};
@@ -151,12 +158,15 @@ void update(uint32_t tick)
       birb.flap(tick);
     }
 
-    if (tick % 10 == 0)
+    if (tick % int(10 - game.speed) == 0)
     {
       pipe.next();
       if (tick > (birb.last_update + 10))
       {
         birb.fall();
+      }
+      if(game.score % 5 == 0 && game.score > 0) {
+        game.increase_speed();
       }
     }
 
