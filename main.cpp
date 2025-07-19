@@ -1,5 +1,5 @@
-#include "picosystem.hpp"
 #include <ctime>
+#include "picosystem.hpp"
 
 using namespace picosystem;
 
@@ -9,7 +9,8 @@ enum state_t
   GAME_OVER
 };
 
-enum notes {
+enum notes
+{
   C4 = 261,
   D4 = 294,
   E4 = 329,
@@ -20,6 +21,280 @@ enum notes {
   C5 = 523
 };
 
+color_t my_spritesheet[256] = {
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0x44ff,
+    0x44ff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0x44ff,
+    0x44ff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0xeefe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xffff,
+    0x00f0,
+    0xffff,
+    0xe3fe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x44ff,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0xeefe,
+    0x99f9,
+    0x99f9,
+    0xeefe,
+    0x99f9,
+    0xeefe,
+    0x99f9,
+    0xeefe,
+    0x0000,
+    0x0000,
+    0xffff,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x00f0,
+    0xffff,
+    0xe3fe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0x00f0,
+    0xffff,
+    0x00f0,
+    0xeefe,
+    0xeefe,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0x99f9,
+    0xeefe,
+    0x0000,
+    0xeefe,
+    0xffff,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0xffff,
+    0xe3fe,
+    0xffff,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0x99f9,
+    0xeefe,
+    0x99f9,
+    0xeefe,
+    0xeefe,
+    0x0000,
+    0xeefe,
+    0xffff,
+    0xeefe,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xeefe,
+    0xffff,
+    0xffff,
+    0xffff,
+    0xffff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xffff,
+    0xeefe,
+    0xffff,
+    0x0000,
+    0xe3f5,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xeefe,
+    0xe3f5,
+    0xeefe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xc2fc,
+    0xe3fe,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xfcff,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0xe3f5,
+    0xe3f5,
+    0xeefe,
+    0xe3f5,
+    0xeefe,
+    0xeefe,
+    0xe3f5,
+    0xeefe,
+};
+
+enum sprite_index_t
+{
+  BIRB_FLAP = 0,
+  BIRB_HORIZONTAL = 1,
+  BIRB_FALL = 2,
+  BIRB_GRAVE = 3
+};
+
+// Create a buffer_t for your spritesheet
+buffer_t my_spritesheet_buffer = {
+    32,             // width
+    8,              // height
+    my_spritesheet, // data pointer
+    false};
+
 struct vec_t
 {
   int32_t x, y;
@@ -29,13 +304,14 @@ struct Sound
 {
   voice_t v;
   Sound(int32_t attack, int32_t decay, int32_t sustain, int32_t release, int32_t bend = 0, int32_t bend_ms = 0, int32_t reverb = 0, int32_t noise = 0, int32_t distort = 0) : v(voice(attack, decay, sustain, release, bend, bend_ms, reverb, noise, distort)) {}
-  
-  void play_sound(int32_t frequency, int32_t duration, int32_t volume = 100) {
+
+  void play_sound(int32_t frequency, int32_t duration, int32_t volume = 100)
+  {
     play(v, frequency, duration, volume);
   }
 };
 
-struct Game 
+struct Game
 {
   state_t state = PLAYING;
   bool button_a_was_pressed = false;
@@ -47,7 +323,8 @@ struct Game
   Sound point_score_sound = Sound(5, 150, 0, 50);
   Sound speed_up_sound = Sound(50, 200, 50, 300);
 
-  void increase_speed() {
+  void increase_speed()
+  {
     speed = std::min(speed + 0.1f, MAX_SPEED);
     speed_up_sound.play_sound(notes::C4, 100, 40);
   }
@@ -62,6 +339,7 @@ struct Birb
   uint32_t last_update = 0;
   Sound flap_sound = Sound(250, 100, 40, 0, 0, 0, 0, 0, 0);
   Sound collision_sound = Sound(5, 500, 400, 600, 0, 0, 0, 0, 0);
+  sprite_index_t sprite = BIRB_HORIZONTAL;
 
   void flap(uint32_t tick)
   {
@@ -69,12 +347,28 @@ struct Birb
     last_update = tick;
     flap_sound.play_sound(notes::F4, 100, 40);
     body = next();
+    sprite = BIRB_FLAP;
   }
 
   void fall()
   {
     dir.y = 1;
     body = next();
+    sprite = BIRB_HORIZONTAL;
+  }
+
+  void death()
+  {
+    if (body.y < game.bounds.y)
+    {
+      dir.y = 1;
+      body = next();
+      sprite = BIRB_FALL;
+    }
+    else
+    {
+      sprite = BIRB_GRAVE;
+    }
   }
 
   vec_t next()
@@ -109,9 +403,12 @@ struct Pipe
     if (x_pos == 0)
     {
       game.score++;
-      if(game.score % 5 == 0 && game.score > 0) {
+      if (game.score % 5 == 0 && game.score > 0)
+      {
         game.increase_speed();
-      } else {
+      }
+      else
+      {
         game.point_score_sound.play_sound(notes::C4, 100, 40);
       }
     }
@@ -134,9 +431,6 @@ struct Pipe
     bottom_pipe_height = game.bounds.y - (gap_pos + gap_size);
   }
 };
-
-
-
 
 vec_t transform(vec_t v)
 {
@@ -205,6 +499,7 @@ void update(uint32_t tick)
     {
       init();
     }
+    birb.death();
   }
 }
 
@@ -214,10 +509,8 @@ void draw(uint32_t tick)
   pen(6, 12, 15); // Sky blue color
   clear();
 
-  // Draw the birb
-  pen(15, 14, 1);
-  vec_t birb_screen_pos = transform(birb.body);              // Transform grid position to screen position
-  frect(birb_screen_pos.x, birb_screen_pos.y, game.scale, game.scale); // Draw the birb as a rectangle
+  // Set the spritesheet buffer
+  spritesheet(&my_spritesheet_buffer);
 
   // Draw the pipes
   pen(0, 255, 0); // Green color for pipes
@@ -225,6 +518,14 @@ void draw(uint32_t tick)
   vec_t bottom_pipe_screen_pos = transform(pipe.bottom_pipe_start());
   frect(top_pipe_screen_pos.x, top_pipe_screen_pos.y, game.scale, pipe.top_pipe_height * game.scale);
   frect(bottom_pipe_screen_pos.x, bottom_pipe_screen_pos.y, game.scale, (pipe.bottom_pipe_height + 1) * game.scale);
+
+  // Draw the birb
+  vec_t birb_screen_pos = transform(birb.body); // Transform grid position to screen position
+  int y_offset = (birb.sprite == BIRB_GRAVE) ? -2 : 0;
+  sprite(
+      birb.sprite,
+      birb_screen_pos.x,
+      birb_screen_pos.y + y_offset);
 
   // draw the scoreboard
   pen(0, 0, 0, 4);
